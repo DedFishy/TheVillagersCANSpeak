@@ -1,3 +1,5 @@
+const MODELS_URL = '/model';
+
 const webcamVideoElement = document.getElementById("webcam-view");
 
 const loaderBody = document.getElementById("loader");
@@ -55,10 +57,10 @@ async function setCalibrateButtonText(text) {
 async function setup() {
     
     updateLoaderTitle("Loading SSD Mobilenet V1...")
-    await faceapi.nets.ssdMobilenetv1.loadFromUri('/model');
+    await faceapi.nets.ssdMobilenetv1.loadFromUri(MODELS_URL);
 
     updateLoaderTitle("Loading Face Landmark 68 Net...")
-    await faceapi.nets.faceLandmark68Net.loadFromUri('/model');
+    await faceapi.nets.faceLandmark68Net.loadFromUri(MODELS_URL);
 
     updateLoaderTitle("Waiting for webcam permissions...")
     await getWebcam();
@@ -154,4 +156,4 @@ async function calibrate() {
 
 document.body.onload = async (event) => {await setup();};
 
-webcamVideoElement.onload = (event) => {processFrame();}
+webcamVideoElement.oncanplay = (event) => {processFrame();}
