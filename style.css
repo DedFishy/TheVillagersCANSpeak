@@ -1,0 +1,29 @@
+body {
+    font-family: sans-serif;
+    background-color: black;
+    color: white;
+}
+
+#loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    background-color: black;
+}
+#loader.hidden {
+    display: none;
+}
+
+#mouth-box-container {
+    width: 10vh;
+    height: 10vh;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#mouth-box {
+    background-color: white;;
+}
