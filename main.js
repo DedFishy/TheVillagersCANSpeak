@@ -17,7 +17,13 @@ const synth = new Tone.Synth().toDestination();
 
 const languages = {
     "🎵": playTones,
-    "📻": playMorseCode
+    "📻": playMorseCode,
+    "✈️": playAudioToVolume("jet2holiday.mp3"),
+    "🦗": playAudioToVolume("crickets.mp3"),
+    "🛻": playAudioToVolume("bergentruckung.mp3"),
+    "💥": playAudioWhenMouthAgape("vine-boom.mp3"),
+    "❌": playAudioWhenMouthAgape("incorrect.mp3"),
+
 }
 
 var opened = false;
@@ -229,11 +235,28 @@ async function playMorseCode(mouthWidth, mouthHeight, faceWidthPercentage) {
 function playAudioToVolume(file) {
     const audio = new Audio(file);
     audio.volume = 0;
+    audio.loop = true;
     audio.play();
     languageSelect.onchange = (event) => {audio.pause()}
     return async (mouthWidth, mouthHeight, faceWidthPercentage) => {
-        if (audio.paused) audio.play();
-        audio.volume = mouthHeight;
+        var volume = mouthHeight;
+        if (volume < 0.2) audio.pause();
+        else if (audio.paused) audio.play();
+        volume -= 0.2
+        volume *= 5
+        audio.volume = clamp(volume);
+    }
+}
+
+function playAudioWhenMouthAgape(file) {
+    const audio = new Audio(file);
+    languageSelect.onchange = (event) => {audio.pause()}
+    return async (mouthWidth, mouthHeight, faceWidthPercentage) => {
+        if (mouthHeight > 0.5 && audio.paused) {
+            audio.currentTime = 0;
+            audio.play();
+        }
+        else if (mouthHeight <= 0.5 && !audio.paused) audio.pause();
     }
 }
 
