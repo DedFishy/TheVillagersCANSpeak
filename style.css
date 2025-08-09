@@ -24,6 +24,11 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 #mouth-box {
     background-color: white;;
+}
+
+#load-btn {
+    margin-top: 10px:
 }
