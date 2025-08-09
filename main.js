@@ -17,6 +17,8 @@ const calibrationMouthView = document.getElementById("calibration-mouth");
 
 const calibrationOverlay = document.getElementById("calibration-overlay");
 
+const synth = new Tone.Synth().toDestination();
+
 const WIDTH_TABLE = [
     "A",
     "B",
@@ -162,7 +164,7 @@ async function processFrame(timestamp) {
 }
 
 async function playTones(mouthWidth, mouthHeight) {
-    const synth = new Tone.Synth().toDestination();
+    
     const now = Tone.now();
 
     let totalWIdthNotes = WIDTH_TABLE.length;
