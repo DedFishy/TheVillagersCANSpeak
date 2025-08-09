@@ -68,7 +68,7 @@ function getWidthPercentage(positions, faceWidthPercent) {
 }
 
 function getFaceWidthPercent(positions) {
-    return (positions[landmarks.faceLeft] - positions[landmarks.faceRight]) - conf
+    return ((positions[landmarks.faceLeft] - positions[landmarks.faceRight]) - mouthCalibration.faceWidth) / mouthCalibration.faceWidth
 }
 
 async function processFrame(timestamp) {
