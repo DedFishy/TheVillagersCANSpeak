@@ -17,8 +17,12 @@ const synth = new Tone.Synth().toDestination();
 
 const languages = {
     "🎵": playTones,
-    "📻": playMorse
+    "📻": playMorseCode
 }
+
+var opened = false;
+var last_opened = Date.now();
+var last_closed = Date.now();
 
 var gotWebcam = false;
 
@@ -167,7 +171,7 @@ async function processFrame(timestamp) {
         mouthBox.style.width = Math.round(mouthWidth * 100) + "%";
         mouthBox.style.height = Math.round(mouthHeight * 100) + "%";
         latestLandmarks = positions;
-        if (calibrationState == 5) {
+        if (calibrationState == 5 && document.hasFocus()) {
             (await getSelectedLanguage())(mouthWidth, mouthHeight, faceWidthPercentage);
         }
     } else {
@@ -175,6 +179,11 @@ async function processFrame(timestamp) {
     }
 
     requestAnimationFrame(processFrame);
+}
+
+
+document.onblur = async (event) => {
+    synth.triggerRelease(Tone.now());
 }
 
 async function playTones(mouthWidth, mouthHeight, faceWidthPercentage) {
@@ -189,8 +198,44 @@ async function playTones(mouthWidth, mouthHeight, faceWidthPercentage) {
     console.log("Playing note: " + note);
     synth.triggerAttack(note, now);
 }
-async function playMorse(mouthWidth, mouthHeight, faceWidthPercentage) {
+
+async function playMorseCode(mouthWidth, mouthHeight, faceWidthPercentage) {
+    console.log("Mouth height: " + mouthHeight, 
+                "last opened: " + last_opened,
+                "last closed: " + last_closed,
+                "opened: " + opened);
+    if (mouthHeight > 0.3) {
+        if (!opened) {
+            last_opened = Date.now();
+            opened = true;
+            console.log("Mouth opened at " + last_opened);
+        }
+    } else if (mouthHeight <= 0.3) {
+        if (opened) {
+            last_closed = Date.now();
+            opened = false;
+            const duration = last_closed - last_opened;
+            if (duration < 500) {
+                console.log("Mouth closed at " + last_closed + " (short, duration: " + duration + "ms)");
+                playMorse(true);
+            } else {
+                console.log("Mouth closed at " + last_closed + " (long, duration: " + duration + "ms)");
+                playMorse(false);
+            }
+        }
+    }
+}
+
+function playMorse(short) {
+    const now = Tone.now();
+    const morseCode = short ? "short" : "long";
+    console.log("Playing morse code: " + morseCode);
     
+    if (short) {
+        synth.triggerAttackRelease("C4", 0.1, now);
+    } else {
+        synth.triggerAttackRelease("C5", 0.3, now);
+    }
 }
 
 var calibrationState = DEBUG ? 5 : 1;
