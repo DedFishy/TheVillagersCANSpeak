@@ -280,7 +280,7 @@ function playMorse(short) {
     }
 }
 
-var calibrationState = DEBUG ? 5 : 1;
+var calibrationState = DEBUG ? 4 : 1;
 var calibrationComplete = DEBUG;
 
 async function calibrate() {
@@ -305,13 +305,11 @@ async function calibrate() {
         calibrationState = 3;
     } else if (calibrationState == 3) {
         mouthCalibration.maxWidth = getWidth(latestLandmarks);
+
+        mouthCalibration.minHeight = getHeight(latestLandmarks);
         setMouthSize(7, 20);
         calibrationState = 4;
     } else if (calibrationState == 4) {
-        mouthCalibration.minHeight = getHeight(latestLandmarks);
-        setMouthSize(20, 7);
-        calibrationState = 5;
-    } else if (calibrationState == 5) {
         mouthCalibration.maxHeight = getHeight(latestLandmarks);
         calibrationState = 0;
         hideCalibration();
