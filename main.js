@@ -1,5 +1,7 @@
 const MODELS_URL = '/model';
 
+const DEBUG = true;
+
 const webcamVideoElement = document.getElementById("webcam-view");
 
 const loaderBody = document.getElementById("loader");
@@ -12,6 +14,8 @@ const message = document.getElementById("message");
 const calibrateBtn = document.getElementById("calibrate-btn");
 
 const calibrationMouthView = document.getElementById("calibration-mouth");
+
+const calibrationOverlay = document.getElementById("calibration-overlay");
 
 var gotWebcam = false;
 
@@ -40,6 +44,14 @@ async function getWebcam() {
         webcamVideoElement.srcObject = stream;
         gotWebcam = true;
     }
+}
+
+async function hideCalibration() {
+    calibrationOverlay.style.display = "none";
+}
+if (DEBUG) hideCalibration();
+async function showCalibration() {
+    calibrationOverlay.style.display = "flex";
 }
 
 async function updateLoaderTitle(title) {
@@ -127,40 +139,37 @@ async function processFrame(timestamp) {
     requestAnimationFrame(processFrame);
 }
 
-var calibrationState = 0;
+var calibrationState = 1;
 
 async function calibrate() {
     if (latestLandmarks == null) {
         setMessage("Cannot calibrate until a face is detected.");
     } else if (calibrationState == 0) {
         setMouthSize(20, 10);
-        setCalibrateButtonText("Done");
         calibrationState = 1;
     } else if (calibrationState == 1) {
         mouthCalibration.faceWidth = getFaceWidth(latestLandmarks);
         setMouthSize(2, 2)
-        setCalibrateButtonText("Done");
+        setCalibrateButtonText("👍");
         calibrationState = 2;
     } else if (calibrationState == 2) {
         mouthCalibration.minWidth = getWidth(latestLandmarks);
         setMouthSize(50, 5);
-        setCalibrateButtonText("Done")
         calibrationState = 3;
     } else if (calibrationState == 3) {
         mouthCalibration.maxWidth = getWidth(latestLandmarks);
         setMouthSize(2, 25)
-        setCalibrateButtonText("Done");
         calibrationState = 4;
     } else if (calibrationState == 4) {
         mouthCalibration.minHeight = getHeight(latestLandmarks);
-        setMouthSize(25, 10)
-        setCalibrateButtonText("Done");
+        setMouthSize(50, 5)
         calibrationState = 5;
     } else if (calibrationState == 5) {
         mouthCalibration.maxHeight = getHeight(latestLandmarks);
         setMouthSize(20, 10);
-        setCalibrateButtonText("Recalibrate");
+        setCalibrateButtonText("↩️");
         calibrationState = 0;
+        hideCalibration();
     }
 }
 

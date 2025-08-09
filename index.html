@@ -17,17 +17,17 @@
 	
 	        </video>
 
-        <div id="calibration-view">
-            <div id="calibration-mouth"></div>
+        <div id="calibration-overlay">
+            <div id="calibration-view">
+                <div id="calibration-mouth"></div>
+            </div>
+            
+            <button id="calibrate-btn" onclick="calibrate()">👍</button>
         </div>
 
         <div id="mouth-box-container">
             <div id="mouth-box"></div>
         </div>
-
-        <div id="message">Please calibrate for your face!</div>
-
-        <button id="calibrate-btn" onclick="calibrate()">Calibrate</button>
 
         <script src="https://unpkg.com/tone"></script>
         <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.min.js"></script>
