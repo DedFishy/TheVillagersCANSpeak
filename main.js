@@ -21,7 +21,11 @@ const languages = {
     "✈️": playAudioToVolume("jet2holiday.mp3"),
     "🦗": playAudioToVolume("crickets.mp3"),
     "🛻": playAudioToVolume("bergentruckung.mp3"),
+    "🍔": playAudioToVolume("eating.mp3"),
+    "🏈": playAudioToVolume("nfl.mp3"),
     "💥": playAudioWhenMouthAgape("vine-boom.mp3"),
+    "⚠️": playAudioWhenMouthAgape("error.mp3"),
+    "🔊": playAudioWhenMouthAgape("augh.mp3"),
     "❌": playAudioWhenMouthAgape("incorrect.mp3"),
 
 }
@@ -239,7 +243,7 @@ function playAudioToVolume(file) {
     const audio = new Audio(file);
     audio.volume = 0;
     audio.loop = true;
-    audio.play();
+    audio.pause();
     languageSelect.addEventListener("click", (event) => {
         console.log("Pausing audio for " + file); 
         audio.pause();
@@ -255,6 +259,9 @@ function playAudioToVolume(file) {
         else if (audio.paused) audio.play();
         volume *= 5
         audio.volume = clamp(volume);
+
+        var speed = mouthWidth + 0.8;
+        audio.playbackRate = speed;
     }
 }
 
