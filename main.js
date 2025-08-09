@@ -19,6 +19,11 @@ const calibrationOverlay = document.getElementById("calibration-overlay");
 
 const synth = new Tone.Synth().toDestination();
 
+const languages = {
+    "🎵": playTones,
+    "📻": playMorse
+}
+
 const WIDTH_TABLE = [
     "A",
     "B",
@@ -174,7 +179,10 @@ async function playTones(mouthWidth, mouthHeight) {
 
     let note = firstPart + secondPart;
     console.log("Playing note: " + note);
-    synth.triggerAttackRelease(note, "8n", now);
+    synth.triggerAttack(note, now);
+}
+async function playMorse(mouthWidth, mouthHeight) {
+    
 }
 
 var calibrationState = 1;
