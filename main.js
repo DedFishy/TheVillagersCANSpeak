@@ -159,9 +159,9 @@ async function calibrate() {
     } else if (calibrationState == 5) {
         mouthCalibration.maxHeight = getHeight(latestLandmarks);
         setMouthSize(20, 10);
-        setCalibrateButtonText("good");
-        calibrationState = -1;
-    } else {}
+        setCalibrateButtonText("Recalibrate");
+        calibrationState = 0;
+    }
 }
 
 document.body.onload = async (event) => {await setup();};
