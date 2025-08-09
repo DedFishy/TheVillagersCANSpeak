@@ -171,7 +171,7 @@ async function processFrame(timestamp) {
         mouthBox.style.width = Math.round(mouthWidth * 100) + "%";
         mouthBox.style.height = Math.round(mouthHeight * 100) + "%";
         latestLandmarks = positions;
-        if (calibrationState == 5) {
+        if (calibrationState == 5 && document.hasFocus()) {
             (await getSelectedLanguage())(mouthWidth, mouthHeight, faceWidthPercentage);
         }
     } else {
@@ -179,6 +179,11 @@ async function processFrame(timestamp) {
     }
 
     requestAnimationFrame(processFrame);
+}
+
+
+document.onblur = async (event) => {
+    synth.triggerRelease(Tone.now());
 }
 
 async function playTones(mouthWidth, mouthHeight, faceWidthPercentage) {
