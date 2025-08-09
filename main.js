@@ -1,5 +1,5 @@
 const MODELS_URL = "/model";
-const DEBUG = false;
+const DEBUG = true;
 const WIDTH_TABLE = ["A", "B", "C", "D", "E", "F", "G"];
 const HEIGHT_TABLE = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
@@ -11,6 +11,7 @@ const message = document.getElementById("message");
 const calibrateBtn = document.getElementById("calibrate-btn");
 const calibrationMouthView = document.getElementById("calibration-mouth");
 const calibrationOverlay = document.getElementById("calibration-overlay");
+const languageSelect = document.getElementById("language-select");
 
 const synth = new Tone.Synth().toDestination();
 
@@ -56,6 +57,21 @@ async function showCalibration() {
     calibrationOverlay.style.display = "flex";
 }
 
+async function populateLanguages() {
+    languageSelect.innerHTMl = "";
+    Object.keys(languages).forEach((value, index, array) => {
+        const optionEl = document.createElement("option");
+        optionEl.value = value;
+        optionEl.innerText = value;
+        languageSelect.appendChild(optionEl);
+    })
+}
+async function getSelectedLanguage() {
+    const language = languageSelect.options[languageSelect.selectedIndex].text;
+    if (language != "🎵") synth.triggerRelease(Tone.now());
+    return languages[language];
+}
+
 async function updateLoaderTitle(title) {
     loaderTitle.innerText = title;
 }
@@ -77,6 +93,7 @@ async function setMouthSize(width, height) {
 }
 
 async function setup() {
+    await populateLanguages()
     await setMouthSize(20, 10);
 
     updateLoaderTitle("Loading SSD Mobilenet V1...");
@@ -151,7 +168,7 @@ async function processFrame(timestamp) {
         mouthBox.style.height = Math.round(mouthHeight * 100) + "%";
         latestLandmarks = positions;
         if (calibrationState == 5) {
-            playTones(mouthWidth, mouthHeight, faceWidthPercentage);
+            (await getSelectedLanguage())(mouthWidth, mouthHeight, faceWidthPercentage);
         }
     } else {
         console.log("you have no face.");
@@ -160,7 +177,7 @@ async function processFrame(timestamp) {
     requestAnimationFrame(processFrame);
 }
 
-async function playTones(mouthWidth, mouthHeight) {
+async function playTones(mouthWidth, mouthHeight, faceWidthPercentage) {
     const now = Tone.now();
 
     let totalWIdthNotes = WIDTH_TABLE.length;
@@ -172,11 +189,11 @@ async function playTones(mouthWidth, mouthHeight) {
     console.log("Playing note: " + note);
     synth.triggerAttack(note, now);
 }
-async function playMorse(mouthWidth, mouthHeight) {
+async function playMorse(mouthWidth, mouthHeight, faceWidthPercentage) {
     
 }
 
-var calibrationState = 1;
+var calibrationState = DEBUG ? 5 : 1;
 
 async function calibrate() {
     if (latestLandmarks == null) {
