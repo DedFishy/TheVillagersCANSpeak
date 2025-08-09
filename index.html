@@ -7,30 +7,30 @@
     </head>
 
     <body>
-        <div id="loader">
-            <h2 id="loader-title">Loading...</h2>
-        </div>
-
-        <h1>The Villagers CAN Speak</h1>
-
-        	<video autoplay="true" id="webcam-view">
-	
-	        </video>
-
-        <div id="calibration-overlay">
-            <div id="calibration-view">
-                <div id="calibration-mouth"></div>
+        <div class="container">
+            <div id="loader">
+                <h2 id="loader-title">Loading...</h2>
             </div>
-            
-            <button id="calibrate-btn" onclick="calibrate()">👍</button>
-        </div>
 
-        <div id="mouth-box-container">
-            <div id="mouth-box"></div>
-        </div>
+            <h1 class="css-3d-text">the villagers CAN speak</h1>
 
-        <select id="language-select">
-        </select>
+            <video autoplay="true" id="webcam-view"></video>
+
+            <div id="calibration-overlay">
+                <div id="calibration-view">
+                    <div id="calibration-mouth"></div>
+                </div>
+                
+                <button id="calibrate-btn" onclick="calibrate()">👍</button>
+            </div>
+
+            <div id="mouth-box-container">
+                <div id="mouth-box"></div>
+            </div>
+
+            <select id="language-select">
+            </select>
+        </div>
 
         <script src="https://unpkg.com/tone"></script>
         <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.min.js"></script>

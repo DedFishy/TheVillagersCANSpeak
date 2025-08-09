@@ -173,6 +173,7 @@ async function processFrame(timestamp) {
         .withFaceLandmarks();
 
     if (faces.length > 0) {
+        webcamVideoElement.style.borderColor = "green";
         const positions = faces[0].landmarks.positions;
         const faceWidthPercentage = getFaceWidthPercent(positions);
         var mouthWidth = getWidthPercentage(positions, faceWidthPercentage);
@@ -184,6 +185,8 @@ async function processFrame(timestamp) {
             (await getSelectedLanguage())(mouthWidth, mouthHeight, faceWidthPercentage);
         }
     } else {
+        webcamVideoElement.style.borderColor = "red";
+        synth.triggerRelease(Tone.now());
         console.log("you have no face.");
     }
 
