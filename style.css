@@ -2,7 +2,41 @@ body {
     font-family: sans-serif;
     background-color: black;
     color: white;
+    overflow: hidden;
 }
+
+#webcam-view {
+    border: 2px solid white;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100dvh;
+}
+
+ .css-3d-text {
+    font-size: 70px;
+    color: #0783ff;
+    font-family: Arial Black, Gadget, sans-serif;
+    text-shadow: 0px 0px 0 rgb(2,126,250),
+                 1px 1px 0 rgb(-3,121,245),
+                 2px 2px 0 rgb(-8,116,240),
+                 3px 3px 0 rgb(-13,111,235),
+                 4px 4px 0 rgb(-18,106,230),
+                 5px 5px 0 rgb(-23,101,225),
+                 6px 6px 0 rgb(-28,96,220),
+                 7px 7px 0 rgb(-33,91,215),
+                 8px 8px 0 rgb(-38,86,210),
+                 9px 9px 0 rgb(-43,81,205),
+                 10px 10px  0 rgb(-48,76,200),
+                 11px 11px 10px rgba(0,0,0,0.6),
+                 11px 11px 1px rgba(0,0,0,0.5),
+                 0px 0px 10px rgba(0,0,0,.2);
+ }
 
 #loader {
     position: absolute;
@@ -23,6 +57,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 20px;
 }
 
 #mouth-box {
@@ -57,4 +92,21 @@ body {
     top: 62%;
     position: absolute;
     border-radius: 100%;
+}
+
+#language-select {
+    border: none;
+    background-color: rgba(27, 62, 156, 1);
+    color: white;
+    padding: 10px;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#language-select:hover {
+    background-color: rgba(43, 78, 175, 1);
+    box-shadow: 0 4px 12px rgba(93, 115, 255, 0.3);
 }
