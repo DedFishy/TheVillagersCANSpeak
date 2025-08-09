@@ -27,8 +27,7 @@ const languages = {
     "⚠️": playAudioWhenMouthAgape("error.mp3"),
     "🔊": playAudioWhenMouthAgape("augh.mp3"),
     "❌": playAudioWhenMouthAgape("incorrect.mp3"),
-
-}
+};
 
 var opened = false;
 var last_opened = Date.now();
@@ -81,7 +80,7 @@ async function populateLanguages() {
         optionEl.value = value;
         optionEl.innerText = value;
         languageSelect.appendChild(optionEl);
-    })
+    });
 }
 async function getSelectedLanguage() {
     const language = languageSelect.options[languageSelect.selectedIndex].text;
@@ -96,18 +95,15 @@ async function hideLoader() {
     loaderBody.classList.add("hidden");
 }
 
-async function setCalibrateButtonText(text) {
-    calibrateBtn.innerText = text;
-}
-
 async function setMouthSize(width, height) {
     calibrationMouthView.style.width = width + "%";
     calibrationMouthView.style.height = height + "%";
     calibrationMouthView.style.left = 50 - width / 2 + "%";
+    calibrationMouthView.style.top = 68 - height / 2 + "%";
 }
 
 async function setup() {
-    await populateLanguages()
+    await populateLanguages();
     await setMouthSize(20, 10);
 
     updateLoaderTitle("⏳🌐");
@@ -136,11 +132,10 @@ function getWidth(positions) {
     return positions[landmarks.mouthLeft].x - positions[landmarks.mouthRight].x;
 }
 function getWidthPercentage(positions, faceWidthPercent) {
-    return (
-        clamp(
-            (getWidth(positions) - mouthCalibration.minWidth) /
-                mouthCalibration.maxWidth * (1 - faceWidthPercent)
-        )
+    return clamp(
+        ((getWidth(positions) - mouthCalibration.minWidth) /
+            mouthCalibration.maxWidth) *
+            (1 - faceWidthPercent)
     );
 }
 
@@ -148,11 +143,10 @@ function getHeight(positions) {
     return positions[landmarks.mouthTop].y - positions[landmarks.mouthBottom].y;
 }
 function getHeightPercentage(positions, faceWidthPercent) {
-    return (
-        clamp(
-            (getHeight(positions) - mouthCalibration.minHeight) /
-                mouthCalibration.maxHeight
-         * (1 - faceWidthPercent))
+    return clamp(
+        ((getHeight(positions) - mouthCalibration.minHeight) /
+            mouthCalibration.maxHeight) *
+            (1 - faceWidthPercent)
     );
 }
 
@@ -163,7 +157,7 @@ function getFaceWidthPercent(positions) {
     return (
         (getFaceWidth(positions) - mouthCalibration.faceWidth) /
         mouthCalibration.faceWidth
-    )
+    );
 }
 
 async function processFrame(timestamp) {
@@ -171,6 +165,7 @@ async function processFrame(timestamp) {
         .detectAllFaces(webcamVideoElement)
         .withFaceLandmarks();
 
+    latestLandmarks = null;
     if (faces.length > 0) {
         webcamVideoElement.style.borderColor = "green";
         const positions = faces[0].landmarks.positions;
@@ -181,7 +176,11 @@ async function processFrame(timestamp) {
         mouthBox.style.height = Math.round(mouthHeight * 100) + "%";
         latestLandmarks = positions;
         if (calibrationComplete && document.hasFocus()) {
-            (await getSelectedLanguage())(mouthWidth, mouthHeight, faceWidthPercentage);
+            (await getSelectedLanguage())(
+                mouthWidth,
+                mouthHeight,
+                faceWidthPercentage
+            );
         }
     } else {
         webcamVideoElement.style.borderColor = "red";
@@ -192,10 +191,9 @@ async function processFrame(timestamp) {
     requestAnimationFrame(processFrame);
 }
 
-
 document.onblur = async (event) => {
     synth.triggerRelease(Tone.now());
-}
+};
 
 async function playTones(mouthWidth, mouthHeight, faceWidthPercentage) {
     const now = Tone.now();
@@ -211,10 +209,6 @@ async function playTones(mouthWidth, mouthHeight, faceWidthPercentage) {
 }
 
 async function playMorseCode(mouthWidth, mouthHeight, faceWidthPercentage) {
-    console.log("Mouth height: " + mouthHeight, 
-                "last opened: " + last_opened,
-                "last closed: " + last_closed,
-                "opened: " + opened);
     if (mouthHeight > 0.3) {
         if (!opened) {
             last_opened = Date.now();
@@ -227,10 +221,8 @@ async function playMorseCode(mouthWidth, mouthHeight, faceWidthPercentage) {
             opened = false;
             const duration = last_closed - last_opened;
             if (duration < 500) {
-                console.log("Mouth closed at " + last_closed + " (short, duration: " + duration + "ms)");
                 playMorse(true);
             } else {
-                console.log("Mouth closed at " + last_closed + " (long, duration: " + duration + "ms)");
                 playMorse(false);
             }
         }
@@ -243,7 +235,7 @@ function playAudioToVolume(file) {
     audio.loop = true;
     audio.pause();
     languageSelect.addEventListener("click", (event) => {
-        console.log("Pausing audio for " + file); 
+        console.log("Pausing audio for " + file);
         audio.pause();
     });
     return async (mouthWidth, mouthHeight, faceWidthPercentage) => {
@@ -255,31 +247,32 @@ function playAudioToVolume(file) {
         lastMouthHeight = volume;
         if (volume < 0.2 && lowDeltaCount > 4) audio.pause();
         else if (audio.paused) audio.play();
-        volume *= 5
+        volume *= 5;
         audio.volume = clamp(volume);
 
         var speed = mouthWidth + 0.8;
         audio.playbackRate = speed;
-    }
+    };
 }
 
 function playAudioWhenMouthAgape(file) {
     const audio = new Audio(file);
-    languageSelect.onchange = (event) => {audio.pause()}
+    languageSelect.onchange = (event) => {
+        audio.pause();
+    };
     return async (mouthWidth, mouthHeight, faceWidthPercentage) => {
         if (mouthHeight > 0.5 && audio.paused) {
             audio.currentTime = 0;
             audio.play();
-        }
-        else if (mouthHeight <= 0.5 && !audio.paused) audio.pause();
-    }
+        } else if (mouthHeight <= 0.5 && !audio.paused) audio.pause();
+    };
 }
 
 function playMorse(short) {
     const now = Tone.now();
     const morseCode = short ? "short" : "long";
     console.log("Playing morse code: " + morseCode);
-    
+
     if (short) {
         synth.triggerAttackRelease("C4", 0.1, now);
     } else {
@@ -291,32 +284,36 @@ var calibrationState = DEBUG ? 5 : 1;
 var calibrationComplete = DEBUG;
 
 async function calibrate() {
+    calibrateBtn.style.backgroundColor = "";
     if (latestLandmarks == null) {
-        console.log("No face detected")
+        console.log("No face detected");
+        calibrateBtn.style.backgroundColor = "red";
+        setTimeout(() => {
+            calibrateBtn.style.backgroundColor = "";
+        }, 500);
     } else if (calibrationState == 0) {
+        calibrationMouthView.style.borderRadius = "0";
         setMouthSize(20, 10);
         calibrationState = 1;
     } else if (calibrationState == 1) {
         mouthCalibration.faceWidth = getFaceWidth(latestLandmarks);
-        setMouthSize(2, 2);
-        setCalibrateButtonText("👍");
+        setMouthSize(5, 5);
+        calibrationMouthView.style.borderRadius = "50%";
         calibrationState = 2;
     } else if (calibrationState == 2) {
         mouthCalibration.minWidth = getWidth(latestLandmarks);
-        setMouthSize(50, 5);
+        setMouthSize(35, 10);
         calibrationState = 3;
     } else if (calibrationState == 3) {
         mouthCalibration.maxWidth = getWidth(latestLandmarks);
-        setMouthSize(2, 25);
+        setMouthSize(10, 25);
         calibrationState = 4;
     } else if (calibrationState == 4) {
         mouthCalibration.minHeight = getHeight(latestLandmarks);
-        setMouthSize(50, 5);
+        setMouthSize(25, 10);
         calibrationState = 5;
     } else if (calibrationState == 5) {
         mouthCalibration.maxHeight = getHeight(latestLandmarks);
-        setMouthSize(20, 10);
-        setCalibrateButtonText("↩️");
         calibrationState = 0;
         hideCalibration();
         calibrationComplete = true;
