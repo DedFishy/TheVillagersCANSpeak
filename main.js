@@ -1,5 +1,5 @@
 const MODELS_URL = "/model";
-const DEBUG = true;
+const DEBUG = false;
 const WIDTH_TABLE = ["A", "B", "C", "D", "E", "F", "G"];
 const HEIGHT_TABLE = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
@@ -96,9 +96,6 @@ async function hideLoader() {
     loaderBody.classList.add("hidden");
 }
 
-async function setMessage(text) {
-    message.innerText = text;
-}
 async function setCalibrateButtonText(text) {
     calibrateBtn.innerText = text;
 }
@@ -113,19 +110,19 @@ async function setup() {
     await populateLanguages()
     await setMouthSize(20, 10);
 
-    updateLoaderTitle("Loading SSD Mobilenet V1...");
+    updateLoaderTitle("⏳🌐");
     await faceapi.nets.ssdMobilenetv1.loadFromUri(MODELS_URL);
 
-    updateLoaderTitle("Loading Face Landmark 68 Net...");
+    updateLoaderTitle("⏳📍");
     await faceapi.nets.faceLandmark68Net.loadFromUri(MODELS_URL);
 
-    updateLoaderTitle("Waiting for webcam permissions...");
+    updateLoaderTitle("📷🙏");
     await getWebcam();
 
     if (gotWebcam) {
         hideLoader();
     } else {
-        updateLoaderTitle("Failed to activate webcam.");
+        updateLoaderTitle("📷❌");
     }
 }
 
@@ -142,9 +139,8 @@ function getWidthPercentage(positions, faceWidthPercent) {
     return (
         clamp(
             (getWidth(positions) - mouthCalibration.minWidth) /
-                mouthCalibration.maxWidth
-        ) *
-        (1 - faceWidthPercent)
+                mouthCalibration.maxWidth * (1 - faceWidthPercent)
+        )
     );
 }
 
@@ -156,8 +152,7 @@ function getHeightPercentage(positions, faceWidthPercent) {
         clamp(
             (getHeight(positions) - mouthCalibration.minHeight) /
                 mouthCalibration.maxHeight
-        ) *
-        (1 - faceWidthPercent)
+         * (1 - faceWidthPercent))
     );
 }
 
@@ -168,7 +163,7 @@ function getFaceWidthPercent(positions) {
     return (
         (getFaceWidth(positions) - mouthCalibration.faceWidth) /
         mouthCalibration.faceWidth
-    );
+    )
 }
 
 async function processFrame(timestamp) {
@@ -185,7 +180,7 @@ async function processFrame(timestamp) {
         mouthBox.style.width = Math.round(mouthWidth * 100) + "%";
         mouthBox.style.height = Math.round(mouthHeight * 100) + "%";
         latestLandmarks = positions;
-        if (calibrationState == 5 && document.hasFocus()) {
+        if (calibrationComplete && document.hasFocus()) {
             (await getSelectedLanguage())(mouthWidth, mouthHeight, faceWidthPercentage);
         }
     } else {
@@ -293,10 +288,11 @@ function playMorse(short) {
 }
 
 var calibrationState = DEBUG ? 5 : 1;
+var calibrationComplete = DEBUG;
 
 async function calibrate() {
     if (latestLandmarks == null) {
-        setMessage("Cannot calibrate until a face is detected.");
+        console.log("No face detected")
     } else if (calibrationState == 0) {
         setMouthSize(20, 10);
         calibrationState = 1;
@@ -323,6 +319,7 @@ async function calibrate() {
         setCalibrateButtonText("↩️");
         calibrationState = 0;
         hideCalibration();
+        calibrationComplete = true;
     }
 }
 
