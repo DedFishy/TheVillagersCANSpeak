@@ -104,7 +104,7 @@ async function setMouthSize(width, height) {
 
 async function setup() {
     await populateLanguages();
-    await setMouthSize(20, 10);
+    await setMouthSize(20, 7);
 
     updateLoaderTitle("⏳🌐");
     await faceapi.nets.ssdMobilenetv1.loadFromUri(MODELS_URL);
@@ -292,25 +292,24 @@ async function calibrate() {
             calibrateBtn.style.backgroundColor = "";
         }, 500);
     } else if (calibrationState == 0) {
-        calibrationMouthView.style.borderRadius = "0";
         setMouthSize(20, 10);
         calibrationState = 1;
     } else if (calibrationState == 1) {
         mouthCalibration.faceWidth = getFaceWidth(latestLandmarks);
         setMouthSize(5, 5);
-        calibrationMouthView.style.borderRadius = "50%";
+        calibrationMouthView.style.borderRadius = "100%";
         calibrationState = 2;
     } else if (calibrationState == 2) {
         mouthCalibration.minWidth = getWidth(latestLandmarks);
-        setMouthSize(35, 10);
+        setMouthSize(25, 10);
         calibrationState = 3;
     } else if (calibrationState == 3) {
         mouthCalibration.maxWidth = getWidth(latestLandmarks);
-        setMouthSize(10, 25);
+        setMouthSize(7, 20);
         calibrationState = 4;
     } else if (calibrationState == 4) {
         mouthCalibration.minHeight = getHeight(latestLandmarks);
-        setMouthSize(25, 10);
+        setMouthSize(20, 7);
         calibrationState = 5;
     } else if (calibrationState == 5) {
         mouthCalibration.maxHeight = getHeight(latestLandmarks);

@@ -91,7 +91,7 @@ body {
     background-color: black;
     top: 62%;
     position: absolute;
-    border-radius: 100%;
+    border-radius: 50%;
 }
 
 #language-select {
