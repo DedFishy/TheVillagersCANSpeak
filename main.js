@@ -323,7 +323,12 @@ document.querySelector("button")?.addEventListener("click", async () => {
 });
 
 document.body.onload = async (event) => {
-    await setup();
+    try {
+        await setup();
+    } catch (error) {
+        console.error("Error during setup:", error);
+        updateLoaderTitle("📷❌");
+    }
 };
 
 webcamVideoElement.oncanplay = (event) => {
