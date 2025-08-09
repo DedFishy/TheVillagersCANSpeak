@@ -17,6 +17,27 @@ const calibrationMouthView = document.getElementById("calibration-mouth");
 
 const calibrationOverlay = document.getElementById("calibration-overlay");
 
+const WIDTH_TABLE = [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+];
+
+const HEIGHT_TABLE = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+];
+
 var gotWebcam = false;
 
 const landmarks = {
@@ -132,11 +153,26 @@ async function processFrame(timestamp) {
         mouthBox.style.width = Math.round(mouthWidth * 100) + "%";
         mouthBox.style.height = Math.round(mouthHeight * 100) + "%";
         latestLandmarks = positions;
+        playTones(mouthWidth, mouthHeight, faceWidthPercentage);
     } else {
         console.log("you have no face.");
     }
 
     requestAnimationFrame(processFrame);
+}
+
+async function playTones(mouthWidth, mouthHeight) {
+    const synth = new Tone.Synth().toDestination();
+    const now = Tone.now();
+
+    let totalWIdthNotes = WIDTH_TABLE.length;
+    let totalHeightNotes = HEIGHT_TABLE.length;
+    let firstPart = WIDTH_TABLE[Math.floor(mouthWidth * totalWIdthNotes)];
+    let secondPart = HEIGHT_TABLE[Math.floor(mouthHeight * totalHeightNotes)];
+
+    let note = firstPart + secondPart;
+    console.log("Playing note: " + note);
+    synth.triggerAttackRelease(note, "8n", now);
 }
 
 var calibrationState = 1;
@@ -172,6 +208,11 @@ async function calibrate() {
         hideCalibration();
     }
 }
+
+document.querySelector("button")?.addEventListener("click", async () => {
+	await Tone.start();
+	console.log("audio is ready");
+});
 
 document.body.onload = async (event) => {await setup();};
 
