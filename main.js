@@ -19,27 +19,6 @@ const languages = {
     "📻": playMorse
 }
 
-const WIDTH_TABLE = [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-];
-
-const HEIGHT_TABLE = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-];
-
 var gotWebcam = false;
 
 const landmarks = {
