@@ -30,6 +30,9 @@ var opened = false;
 var last_opened = Date.now();
 var last_closed = Date.now();
 
+var lastMouthHeight = 0; // For calculating deltas
+var lowDeltaCount = 0;
+
 var gotWebcam = false;
 
 const landmarks = {
@@ -237,12 +240,19 @@ function playAudioToVolume(file) {
     audio.volume = 0;
     audio.loop = true;
     audio.play();
-    languageSelect.onchange = (event) => {audio.pause()}
+    languageSelect.addEventListener("click", (event) => {
+        console.log("Pausing audio for " + file); 
+        audio.pause();
+    });
     return async (mouthWidth, mouthHeight, faceWidthPercentage) => {
         var volume = mouthHeight;
-        if (volume < 0.2) audio.pause();
+        var delta = lastMouthHeight - volume;
+        var deltaLow = delta < 0.1;
+        if (deltaLow) lowDeltaCount++;
+        else lowDeltaCount = 0;
+        lastMouthHeight = volume;
+        if (volume < 0.2 && lowDeltaCount > 4) audio.pause();
         else if (audio.paused) audio.play();
-        volume -= 0.2
         volume *= 5
         audio.volume = clamp(volume);
     }
