@@ -1,6 +1,6 @@
 const MODELS_URL = '/model';
 
-const DEBUG = true;
+const DEBUG = false;
 
 const webcamVideoElement = document.getElementById("webcam-view");
 
@@ -155,8 +155,10 @@ async function processFrame(timestamp) {
         mouthBox.style.width = Math.round(mouthWidth * 100) + "%";
         mouthBox.style.height = Math.round(mouthHeight * 100) + "%";
         latestLandmarks = positions;
-        playTones(mouthWidth, mouthHeight, faceWidthPercentage);
-    } else {
+        if (calibrationState == 5) {
+            playTones(mouthWidth, mouthHeight, faceWidthPercentage);
+        }
+        } else {
         console.log("you have no face.");
     }
 
