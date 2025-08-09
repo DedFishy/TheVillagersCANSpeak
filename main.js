@@ -226,6 +226,17 @@ async function playMorseCode(mouthWidth, mouthHeight, faceWidthPercentage) {
     }
 }
 
+function playAudioToVolume(file) {
+    const audio = new Audio(file);
+    audio.volume = 0;
+    audio.play();
+    languageSelect.onchange = (event) => {audio.pause()}
+    return async (mouthWidth, mouthHeight, faceWidthPercentage) => {
+        if (audio.paused) audio.play();
+        audio.volume = mouthHeight;
+    }
+}
+
 function playMorse(short) {
     const now = Tone.now();
     const morseCode = short ? "short" : "long";
