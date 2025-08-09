@@ -29,3 +29,16 @@ body {
     background-color: white;
     background-color: white;
 }
+#calibration-view {
+    width: 50vw;
+    height: 50vw;
+    background-image: url("/face.svg");
+    position: relative;
+
+}
+#calibration-mouth {
+    background-color: black;
+    top: 62%;
+    position: absolute;
+    border-radius: 100%;
+}

@@ -11,6 +11,8 @@ const message = document.getElementById("message");
 
 const calibrateBtn = document.getElementById("calibrate-btn");
 
+const calibrationMouthView = document.getElementById("calibration-mouth");
+
 var gotWebcam = false;
 
 const landmarks = {
@@ -54,7 +56,15 @@ async function setCalibrateButtonText(text) {
     calibrateBtn.innerText = text;
 }
 
+async function setMouthSize(width, height) {
+    calibrationMouthView.style.width = width + "%";
+    calibrationMouthView.style.height = height + "%";
+    calibrationMouthView.style.left = (50 - (width/2)) + "%";
+}
+
 async function setup() {
+
+    await setMouthSize(20, 10);
     
     updateLoaderTitle("Loading SSD Mobilenet V1...")
     await faceapi.nets.ssdMobilenetv1.loadFromUri(MODELS_URL);
@@ -123,32 +133,32 @@ async function calibrate() {
     if (latestLandmarks == null) {
         setMessage("Cannot calibrate until a face is detected.");
     } else if (calibrationState == 0) {
-        setMessage("Put your face in a good spot where your camera can see it.");
+        setMouthSize(20, 10);
         setCalibrateButtonText("Done");
         calibrationState = 1;
     } else if (calibrationState == 1) {
         mouthCalibration.faceWidth = getFaceWidth(latestLandmarks);
-        setMessage("Good. Now, make your mouth as skinny as you possibly can.");
+        setMouthSize(2, 2)
         setCalibrateButtonText("Done");
         calibrationState = 2;
     } else if (calibrationState == 2) {
         mouthCalibration.minWidth = getWidth(latestLandmarks);
-        setMessage("Good. Now, make your mouth as wide as you possibly can.");
+        setMouthSize(50, 5);
         setCalibrateButtonText("Done")
         calibrationState = 3;
     } else if (calibrationState == 3) {
         mouthCalibration.maxWidth = getWidth(latestLandmarks);
-        setMessage("Good. Now, make your mouth as vertically short as you possibly can.");
+        setMouthSize(2, 25)
         setCalibrateButtonText("Done");
         calibrationState = 4;
     } else if (calibrationState == 4) {
         mouthCalibration.minHeight = getHeight(latestLandmarks);
-        setMessage("Good. Now, make your mouth as vertically tall as you possibly can.");
+        setMouthSize(25, 10)
         setCalibrateButtonText("Done");
         calibrationState = 5;
     } else if (calibrationState == 5) {
         mouthCalibration.maxHeight = getHeight(latestLandmarks);
-        setMessage("Done calibrating.");
+        setMouthSize(20, 10);
         setCalibrateButtonText("good");
         calibrationState = -1;
     } else {}
